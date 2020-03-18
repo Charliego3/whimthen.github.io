@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://whimthen.github.io</id>
     <title>Gridea</title>
-    <updated>2020-03-05T03:51:32.228Z</updated>
+    <updated>2020-03-18T07:25:35.510Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://whimthen.github.io"/>
     <link rel="self" href="https://whimthen.github.io/atom.xml"/>
@@ -10,6 +10,31 @@
     <logo>https://whimthen.github.io/images/avatar.png</logo>
     <icon>https://whimthen.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, Gridea</rights>
+    <entry>
+        <title type="html"><![CDATA[NIO 中需要注意⚠️的事项]]></title>
+        <id>https://whimthen.github.io/post/nio-zhong-xu-yao-zhu-yi-de-shi-xiang/</id>
+        <link href="https://whimthen.github.io/post/nio-zhong-xu-yao-zhu-yi-de-shi-xiang/">
+        </link>
+        <updated>2020-03-18T07:24:41.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="处理事件忘记移除key">处理事件忘记移除key</h1>
+<p>在select返回值大于0的情况下，循环处理Selector.selectedKeys集合，每处理一个必须从Set中移除<br>
+<font color="red">不移除的后果是本次的就绪的key集合下次会再次返回,导致无限循环，CPU消耗100%</font></p>
+<pre><code class="language-java">Iterator&lt;SelectionKey&gt; it=set.iterator();
+    While(it.hasNext()){
+    SelectionKey key=it.next();
+    it.remove(); //切记移除
+    // 处理事件......
+}
+</code></pre>
+<h1 id="selector-返回的-key-集合非线程安全">Selector 返回的 key 集合非线程安全</h1>
+<ul>
+<li>Selector.selectedKeys/keys 返回的集合都是非线程安全的</li>
+<li>Selector.selectedKeys返回的可移除</li>
+<li>Selector.keys 不可变</li>
+<li>对selected keys的处理必须单线程处理或者适当同步</li>
+</ul>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Hello Gridea]]></title>
         <id>https://whimthen.github.io/post/hello-gridea/</id>

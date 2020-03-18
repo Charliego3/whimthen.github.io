@@ -3,7 +3,7 @@
     <meta charset="utf-8"/>
 <meta name="description" content=""/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Gridea</title>
+<title>NIO 中需要注意⚠️的事项 | Gridea</title>
 <link rel="shortcut icon" href="https://whimthen.github.io/favicon.ico?v=1584516329824">
 <link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.css" rel="stylesheet">
 <link rel="stylesheet" href="https://whimthen.github.io/styles/main.css">
@@ -30,11 +30,11 @@
 
 
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 </head>
 <body>
 <div class="main gt-bg-theme-color-first">
-    <div class="main-content">
-        <nav class="navbar navbar-expand-lg">
+    <nav class="navbar navbar-expand-lg">
     <div class="navbar-brand">
         <img class="user-avatar" src="/images/avatar.png" alt="头像">
         <div class="site-name gt-c-content-color-first">
@@ -83,50 +83,51 @@
         </div>
     </div>
 </nav>
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    NIO 中需要注意⚠️的事项
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2020-03-18 ·
+                    </time>
+                    
+                </div>
+                <div class="post-content">
+                    <h1 id="处理事件忘记移除key">处理事件忘记移除key</h1>
+<p>在select返回值大于0的情况下，循环处理Selector.selectedKeys集合，每处理一个必须从Set中移除<br>
+<font color="red">不移除的后果是本次的就绪的key集合下次会再次返回,导致无限循环，CPU消耗100%</font></p>
+<pre><code class="language-java">Iterator&lt;SelectionKey&gt; it=set.iterator();
+    While(it.hasNext()){
+    SelectionKey key=it.next();
+    it.remove(); //切记移除
+    // 处理事件......
+}
+</code></pre>
+<h1 id="selector-返回的-key-集合非线程安全">Selector 返回的 key 集合非线程安全</h1>
+<ul>
+<li>Selector.selectedKeys/keys 返回的集合都是非线程安全的</li>
+<li>Selector.selectedKeys返回的可移除</li>
+<li>Selector.keys 不可变</li>
+<li>对selected keys的处理必须单线程处理或者适当同步</li>
+</ul>
+
+                </div>
+            </article>
+        </div>
 
         
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://whimthen.github.io/post/hello-gridea/" class="post-title gt-a-link">
+                    Hello Gridea
+                </a>
+            </div>
+        
 
-<div class="archives-container">
-    
-        <h2 class="year gt-c-cotent-color-first">2020</h2>
         
-            
-                <article class="post">
-                    <a href="https://whimthen.github.io/post/nio-zhong-xu-yao-zhu-yi-de-shi-xiang/">
-                        <div class="post-title gt-c-content-color-first">
-                            <small><b>2020-03-18&nbsp;&nbsp;·&nbsp;&nbsp;</b></small>
-                            NIO 中需要注意⚠️的事项
-                        </div>
-                    </a>
-                </article>
-            
-        
-            
-        
-    
-        <h2 class="year gt-c-cotent-color-first">2018</h2>
-        
-            
-        
-            
-                <article class="post">
-                    <a href="https://whimthen.github.io/post/hello-gridea/">
-                        <div class="post-title gt-c-content-color-first">
-                            <small><b>2018-12-12&nbsp;&nbsp;·&nbsp;&nbsp;</b></small>
-                            Hello Gridea
-                        </div>
-                    </a>
-                </article>
-            
-        
-    
-</div>
-
-        <div class="pagination-container">
-    
-    
-</div>
-
 
         <div class="site-footer gt-c-content-color-first">
     <div class="slogan gt-c-content-color-first">温故而知新</div>
@@ -155,6 +156,7 @@
 <script>
     hljs.initHighlightingOnLoad()
 </script>
+
 
     </div>
 </div>
