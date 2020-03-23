@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://whimthen.github.io</id>
     <title>自留地</title>
-    <updated>2020-03-23T07:35:58.145Z</updated>
+    <updated>2020-03-23T07:38:50.141Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://whimthen.github.io"/>
     <link rel="self" href="https://whimthen.github.io/atom.xml"/>
@@ -18,7 +18,7 @@
         <updated>2020-03-23T07:34:48.000Z</updated>
         <content type="html"><![CDATA[<h1 id="简介">简介</h1>
 <p>本文档演示了模块内部简单Go软件包的开发，并介绍了<a href="https://golang.org/cmd/go/">go工具</a>，这是获取，构建和安装Go模块，软件包和命令的标准方法。<br>
-<strong>注意:</strong> 本文档使用的是Go 1.13或更高版本，并且未设置GO111MODULE环境变量。如果使用更低版本Go，请查看<a href="https://golang.org/doc/gopath_code.html">官方文档</a></p>
+<strong>注意:</strong> 本文档使用的是Go 1.13或更高版本，并且未设置<code>GO111MODULE</code>环境变量。如果使用更低版本Go，请查看<a href="https://golang.org/doc/gopath_code.html">官方文档</a>。</p>
 <h1 id="组织代码">组织代码</h1>
 <p>Go程序用包来组织代码。包是在同一目录中一起编译的源文件的集合。在一个go源文件中定义的函数，类型，变量和常量对于同一包中的所有其他源文件可见。</p>
 <p>存储库包含一个或多个模块。模块是一起发布的相关Go软件包的集合。Go存储库通常仅包含一个模块，该模块位于存储库的根目录。<code>go.mod</code>文件中声明了<code>模块路径</code>: 模块内所有软件包的倒入路径前缀。该模块将软件包包含在包含其<code>go.mod</code>文件的目录以及该目录的子目录中，直至包含另一个<code>go.mod</code>文件（如果有）的下一个子目录。</p>
