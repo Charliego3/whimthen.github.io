@@ -4,7 +4,7 @@
 <meta name="description" content=""/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>Go: 如何编写Go代码 - 1 | 自留地</title>
-<link rel="shortcut icon" href="https://whimthen.github.io/favicon.ico?v=1584949127747">
+<link rel="shortcut icon" href="https://whimthen.github.io/favicon.ico?v=1584949351560">
 <link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.css" rel="stylesheet">
 <link rel="stylesheet" href="https://whimthen.github.io/styles/main.css">
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
@@ -139,7 +139,7 @@ func main() {
 <pre><code class="language-shell">$ go install example.com/user/hello
 </code></pre>
 <p>该命令生成名为<code>hello</code>的可执行二进制文件。然后，将该二进制文件安装为<code>$HOME/go/bin/hello</code>(或在Windows下为<code>%USERPROFILE%\go\bin\hello.exe</code>)。</p>
-<p>安装路径取决于<a href="">环境变量</a><code>GOPATH</code>和<code>GOBIN</code>。如果设置了<code>GOBIN</code>，则二进制文件被安装在此目录中。如果设置了<code>GOPATH</code>，二进制文件被安装到<code>GOPATH</code>列表中第一个目录的<code>bin</code>子目录中。除此以外，纹紧致文件被安装到默认的<code>GOPATH</code>(<code>$HOME/go</code>或<code>%USERPROFILE%\go</code>)的<code>bin</code>子目录中。</p>
+<p>安装路径取决于<a href="">环境变量</a><code>GOPATH</code>和<code>GOBIN</code>。如果设置了<code>GOBIN</code>，则二进制文件被安装在此目录中。如果设置了<code>GOPATH</code>，二进制文件被安装到<code>GOPATH</code>列表中第一个目录的<code>bin</code>子目录中。除此以外，二进制文件被安装到默认的<code>GOPATH</code>(<code>$HOME/go</code>或<code>%USERPROFILE%\go</code>)的<code>bin</code>子目录中。</p>
 <p>您可以使用<code>go env</code>命令为以后的go命令可移植地设置环境变量的默认值:</p>
 <pre><code class="language-shell">$ go env -w GOBIN=/somewhere/else/bin
 </code></pre>
