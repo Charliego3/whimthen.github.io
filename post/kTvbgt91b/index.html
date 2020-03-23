@@ -1,22 +1,102 @@
-<?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
-    <id>https://whimthen.github.io</id>
-    <title>自留地</title>
-    <updated>2020-03-23T07:35:22.445Z</updated>
-    <generator>https://github.com/jpmonette/feed</generator>
-    <link rel="alternate" href="https://whimthen.github.io"/>
-    <link rel="self" href="https://whimthen.github.io/atom.xml"/>
-    <subtitle>温故而知新</subtitle>
-    <logo>https://whimthen.github.io/images/avatar.png</logo>
-    <icon>https://whimthen.github.io/favicon.ico</icon>
-    <rights>All rights reserved 2020, 自留地</rights>
-    <entry>
-        <title type="html"><![CDATA[Go: 如何编写Go代码 - 1]]></title>
-        <id>https://whimthen.github.io/post/kTvbgt91b/</id>
-        <link href="https://whimthen.github.io/post/kTvbgt91b/">
-        </link>
-        <updated>2020-03-23T07:34:48.000Z</updated>
-        <content type="html"><![CDATA[<h1 id="简介">简介</h1>
+<html>
+<head>
+    <meta charset="utf-8"/>
+<meta name="description" content=""/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Go: 如何编写Go代码 - 1 | 自留地</title>
+<link rel="shortcut icon" href="https://whimthen.github.io/favicon.ico?v=1584948919210">
+<link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.css" rel="stylesheet">
+<link rel="stylesheet" href="https://whimthen.github.io/styles/main.css">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dart.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/go.min.js"></script>
+<script src="https://cdn.bootcss.com/moment.js/2.23.0/moment.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+        crossorigin="anonymous"></script>
+
+<!-- DEMO JS -->
+<script src="media/scripts/index.js"></script>
+
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <div class="navbar-brand">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            自留地
+        </div>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+                <div class="nav-item">
+                    
+                        <a href="/" class="menu gt-a-link">
+                            首页
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/archives" class="menu gt-a-link">
+                            归档
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/tags" class="menu gt-a-link">
+                            标签
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/post/about" class="menu gt-a-link">
+                            关于
+                        </a>
+                    
+                </div>
+            
+        </div>
+    </div>
+</nav>
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    Go: 如何编写Go代码 - 1
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2020-03-23 ·
+                    </time>
+                    
+                </div>
+                <div class="post-content">
+                    <h1 id="简介">简介</h1>
 <p>本文档演示了模块内部简单Go软件包的开发，并介绍了<a href="https://golang.org/cmd/go/">go工具</a>，这是获取，构建和安装Go模块，软件包和命令的标准方法。<br>
 <strong>注意:</strong> 本文档使用的是Go 1.13或更高版本，并且未设置GO111MODULE环境变量。如果使用更低版本Go，请查看<a href="https://golang.org/doc/gopath_code.html">官方文档</a></p>
 <h1 id="组织代码">组织代码</h1>
@@ -192,150 +272,78 @@ func TestReverseRunes(t *testing.T) {
 PASS
 ok  	example.com/user/morestrings 0.165s
 </code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Go: 安装]]></title>
-        <id>https://whimthen.github.io/post/getting-started-1/</id>
-        <link href="https://whimthen.github.io/post/getting-started-1/">
-        </link>
-        <updated>2020-03-23T03:22:51.000Z</updated>
-        <content type="html"><![CDATA[<blockquote>
-<p>下载和安装Go编译器，工具和库的说明</p>
-</blockquote>
-<h1 id="下载go发行版">下载Go发行版</h1>
-<p><a href="https://golang.org/dl/">转到下载页面</a><br>
-官方二进制发行版适用于FreeBSD(10-STABLE及更高版本)，Linux，macOS(10.10及更高版本)和Windows操作系统以及32位(386)和64位(amd64)x86处理器架构。<br>
-如果二进制发行版不适用于您的操作系统和架构的组合，请尝试从<a href="https://golang.org/doc/install/source">源代码安装</a>或<a href="https://golang.org/doc/install/gccgo">安装gccgo</a>而不是gc。</p>
-<h1 id="系统要求">系统要求</h1>
-<p>Go二进制发行版可用于这些受支持的操作系统和系统架构。在继续操作之前，请确保您的系统满足这些要求。</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">操作系统</th>
-<th style="text-align:center">系统架构</th>
-<th style="text-align:left">备注</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">FreeBSD 10.3或更高版本</td>
-<td style="text-align:center">amd64, 386</td>
-<td style="text-align:left">Debian GNU/kFreeBSD不支持</td>
-</tr>
-<tr>
-<td style="text-align:left">Linux 2.6.23或更高版本(带有glibc)</td>
-<td style="text-align:center">amd64, 386, arm, arm64, s390x, ppc64le</td>
-<td style="text-align:left">CentOS/RHEL 5.x不支持。需要从源码安装或其他的libc。</td>
-</tr>
-<tr>
-<td style="text-align:left">macOS 10.10或更高版本</td>
-<td style="text-align:center">amd64</td>
-<td style="text-align:left">使用Xcode<sup>2</sup>提供的clang或gcc<sup>1</sup>支持<code>cgo</code></td>
-</tr>
-<tr>
-<td style="text-align:left">Windows 7, Server 2008R2或更高版本</td>
-<td style="text-align:center">amd64, 386</td>
-<td style="text-align:left">使用MinGW(386)或MinGW-W64(amd64)提供gcc<sup>1</sup>。不需要<code>cygwin</code>或<code>msys</code></td>
-</tr>
-</tbody>
-</table>
-<blockquote>
-<p>1: 仅当计划使用<a href="https://golang.org/cmd/cgo">cgo</a>时，才需要C编译器。<br>
-2: 只需要为Xcode安装命令行工具。如果已经安装了<a href="https://developer.apple.com/Xcode/">Xcode</a>4.3+，则可以从&quot;下载&quot;首选项面板的&quot;组件&quot;选项卡中进行安装。</p>
-</blockquote>
-<h1 id="安装go工具">安装Go工具</h1>
-<p>如果要从旧版Go升级，则必须先删除现有版本。</p>
-<h1 id="linux-macos和freebsd压缩包">Linux, macOS和FreeBSD压缩包</h1>
-<p><a href="https://golang.org/dl/">下载存档文件</a>并解压到<code>/usr/local</code></p>
-<pre><code class="language-shell">$ tar -C /usr/local -xzf go$VERSION.$OS-$ARCH.tar.gz
-</code></pre>
-<p>选择适合你自己的存档文件。例如：如果你要在Linux上为64位x86安装<code>Go1.2.1</code>版本。则存档文件的名称应该是<code>go1.2.1.linux-amd64.tar.gz</code></p>
-<blockquote>
-<p>通常，这些命令必须以root用户或通过sudo运行</p>
-</blockquote>
-<p>将<code>/usr/local/go/bin</code>添加到系统环境变量中。或执行以下命令添加到<code>/etc/profile</code>或<code>$HOME/.profile</code></p>
-<pre><code class="language-shell">$ export PATH=$PATH:/usr/local/go/bin
-</code></pre>
-<p><strong>注意:</strong> 修改配置文件可能需要等到下次重启系统才会生效。要立即应用更改，只需要直接运行shell命令或使用如<code>source ~/.profile</code>之类的命令。</p>
-<h1 id="macos包安装器">macOS包安装器</h1>
-<p><a href="https://golang.org/dl/">下载包文件</a>，打开并根据提示安装Go工具，该软件包将安装Go发行版到<code>/usr/local/go</code></p>
-<p>该软件包需要将<code>/usr/local/go/bin</code>目录添加到系统环境变量中，你可能需要重新启动所有打开的终端会话以使更改生效。</p>
-<h1 id="windows">Windows</h1>
-<p>Go为Windows用户提供两种安装方式</p>
-<ul>
-<li><a href="https://golang.org/doc/install/source">源码安装</a>: 一个<code>zip</code>压缩包，必须设置一些环境变量</li>
-<li><code>MSI安装器</code>: 使用该方式安装将自动配置</li>
-</ul>
-<h3 id="msi安装器">MSI安装器</h3>
-<p>打开<a href="https://golang.org/dl/">MSI文件</a>并根据提示安装Go工具。默认将Go发行版安装到<code>c:/Go</code><br>
-该安装器将<code>c:/Go/bin</code>目录放在系统环境变量中，你可能需要重启所有打开的命令行终端，以使更改生效。</p>
-<h3 id="zip压缩包">Zip压缩包</h3>
-<p><a href="https://golang.org/dl/">下载压缩包文件</a>并解压到指定目录。(建议使用: <code>c:/Go</code>)<br>
-添加<code>bin</code>子目录到系统环境变量中(如: <code>c:/Go/bin</code>)</p>
-<h3 id="在windows下设置环境变量">在Windows下设置环境变量</h3>
-<p>在Windows下，您可以通过“系统”控制面板的“高级”选项卡上的“环境变量”按钮设置环境变量。Windows的某些版本通过“系统”控制面板中的“高级系统设置”选项提供此控制面板</p>
-<h1 id="测试安装">测试安装</h1>
-<p>使用一个简单的程序检查Go是否安装正确<br>
-创建一个以<code>hello.go</code>命名的文件</p>
-<pre><code class="language-go">package main
 
-import &quot;fmt&quot;
+                </div>
+            </article>
+        </div>
 
-func main() {
-	fmt.Printf(&quot;hello, world\n&quot;)
-}
-</code></pre>
-<p>然后使用Go工具编译</p>
-<pre><code class="language-shell">$ go build hello.go
-</code></pre>
-<p>上面的命令将在源代码旁边的当前目录中构建一个名为hello的可执行文件。执行以查看结果。</p>
-<pre><code class="language-shell">$ ./hello
-hello, world
-</code></pre>
-<p>如果你能看到&quot;hello, world&quot;消息说明安装成功</p>
-<h1 id="安装额外的go版本">安装额外的Go版本</h1>
-<p>在同一台计算机上安装多个Go版本可能很有用，例如，以确保软件包的测试可以通过多个Go版本。一旦安装了一个Go版本，就可以如下安装另一个版本(例如1.10.7)</p>
-<pre><code class="language-shell">$ go get golang.org/dl/go1.10.7
-$ go1.10.7 download
-</code></pre>
-<p>新下载的版本可以像go一样使用:</p>
-<pre><code class="language-shell">$ go1.10.7 version
-go version go1.10.7 linux/amd64
-</code></pre>
-<p><a href="https://godoc.org/golang.org/dl#pkg-subdirectories">下载页面</a>上列出了通过此方法可用的所有Go版本。您可以通过查看其GOROOT来找到这些额外的Go版本的安装位置。例如<code>go1.10.7 env GOROOT</code>。要卸载下载的版本，只需删除其GOROOT目录和goX.Y.Z二进制文件</p>
-<h1 id="卸载go">卸载Go</h1>
-<p>要从系统中删除现有的Go安装，请删除go目录。<br>
-在Linux，macOS和FreeBSD下通常为<code>/usr/local/go</code>，在Windows下通常为<code>c:/Go</code><br>
-您还应该从PATH环境变量中删除Go bin目录。<br>
-在Linux和FreeBSD下，您应该编辑<code>/etc/profile</code>或<code>$HOME/.profile</code>。<br>
-如果您使用macOS软件包安装了Go，则应删除<code>/etc/paths.d/go</code>文件。<br>
-Windows用户应阅读有关在Windows下设置环境变量的部分。</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[NIO 中需要注意⚠️的事项]]></title>
-        <id>https://whimthen.github.io/post/nio_notice/</id>
-        <link href="https://whimthen.github.io/post/nio_notice/">
-        </link>
-        <updated>2020-03-18T07:24:41.000Z</updated>
-        <content type="html"><![CDATA[<h1 id="处理事件忘记移除key">处理事件忘记移除key</h1>
-<p>在select返回值大于0的情况下，循环处理Selector.selectedKeys集合，每处理一个必须从Set中移除<br>
-<font color="red">不移除的后果是本次的就绪的key集合下次会再次返回,导致无限循环，CPU消耗100%</font></p>
-<pre><code class="language-java">Iterator&lt;SelectionKey&gt; it=set.iterator();
-    While(it.hasNext()){
-    SelectionKey key=it.next();
-    it.remove(); //切记移除
-    // 处理事件......
-}
-</code></pre>
-<h1 id="selector-返回的-key-集合非线程安全">Selector 返回的 key 集合非线程安全</h1>
-<ul>
-<li>Selector.selectedKeys/keys 返回的集合都是非线程安全的</li>
-<li>Selector.selectedKeys返回的可移除</li>
-<li>Selector.keys 不可变</li>
-<li>对selected keys的处理必须单线程处理或者适当同步</li>
-</ul>
-]]></content>
-    </entry>
-</feed>
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://whimthen.github.io/post/getting-started-1/" class="post-title gt-a-link">
+                    Go: 安装
+                </a>
+            </div>
+        
+
+        
+            
+                <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: '516a9843e72b0a3e198b',
+    clientSecret: 'ccc6c5a8ea4aa0c9e4c36c87cb9c1ef54b5bc97c',
+    repo: 'whimthen.github.io',
+    owner: 'whimthen',
+    admin: ['whimthen'],
+    id: location.pathname,      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+            
+
+            
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">温故而知新</div>
+    <div class="social-container">
+        
+            
+                <a href="https://github.com/whimthen" target="_blank">
+                    <i class="fab fa-github gt-c-content-color-first"></i>
+                </a>
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a href="https://whimthen.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+<script>
+    hljs.initHighlightingOnLoad()
+</script>
+
+
+    </div>
+</div>
+</body>
+</html>
