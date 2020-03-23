@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://whimthen.github.io</id>
     <title>Gridea</title>
-    <updated>2020-03-23T03:26:34.923Z</updated>
+    <updated>2020-03-23T03:28:14.366Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://whimthen.github.io"/>
     <link rel="self" href="https://whimthen.github.io/atom.xml"/>
@@ -10,6 +10,71 @@
     <logo>https://whimthen.github.io/images/avatar.png</logo>
     <icon>https://whimthen.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, Gridea</rights>
+    <entry>
+        <title type="html"><![CDATA[Go: Getting Started - 1]]></title>
+        <id>https://whimthen.github.io/post/getting-started-1/</id>
+        <link href="https://whimthen.github.io/post/getting-started-1/">
+        </link>
+        <updated>2020-03-23T03:22:51.000Z</updated>
+        <content type="html"><![CDATA[<blockquote>
+<p>下载和安装Go编译器，工具和库的说明</p>
+</blockquote>
+<h1 id="下载go发行版">下载Go发行版</h1>
+<p><a href="https://golang.org/dl/">转到下载页面</a><br>
+官方二进制发行版适用于FreeBSD(10-STABLE及更高版本)，Linux，macOS(10.10及更高版本)和Windows操作系统以及32位(386)和64位(amd64)x86处理器体系结构。<br>
+如果二进制发行版不适用于您的操作系统和体系结构的组合，请尝试从<a href="https://golang.org/doc/install/source">源代码安装</a>或<a href="https://golang.org/doc/install/gccgo">安装gccgo</a>而不是gc。</p>
+<h1 id="系统要求">系统要求</h1>
+<p>Go二进制发行版可用于这些受支持的操作系统和系统架构。在继续操作之前，请确保您的系统满足这些要求。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">操作系统</th>
+<th style="text-align:center">系统架构</th>
+<th style="text-align:left">备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">FreeBSD 10.3或更高版本</td>
+<td style="text-align:center">amd64, 386</td>
+<td style="text-align:left">Debian GNU/kFreeBSD不支持</td>
+</tr>
+<tr>
+<td style="text-align:left">Linux 2.6.23或更高版本(带有glibc)</td>
+<td style="text-align:center">amd64, 386, arm, arm64, s390x, ppc64le</td>
+<td style="text-align:left">CentOS/RHEL 5.x不支持。需要从源码安装或其他的libc。</td>
+</tr>
+<tr>
+<td style="text-align:left">macOS 10.10或更高版本</td>
+<td style="text-align:center">amd64</td>
+<td style="text-align:left">使用Xcode<sup>2</sup>提供的clang或gcc<sup>1</sup>支持<code>cgo</code></td>
+</tr>
+<tr>
+<td style="text-align:left">Windows 7, Server 2008R2或更高版本</td>
+<td style="text-align:center">amd64, 386</td>
+<td style="text-align:left">使用MinGW(386)或MinGW-W64(amd64)提供gcc<sup>1</sup>。不需要<code>cygwin</code>或<code>msys</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>1: 仅当计划使用<a href="https://golang.org/cmd/cgo">cgo</a>时，才需要C编译器。<br>
+2: 只需要为Xcode安装命令行工具。如果已经安装了<a href="https://developer.apple.com/Xcode/">Xcode</a>4.3+，则可以从&quot;下载&quot;首选项面板的&quot;组件&quot;选项卡中进行安装。</p>
+</blockquote>
+<h1 id="安装go工具">安装Go工具</h1>
+<p>如果要从旧版Go升级，则必须先删除现有版本。</p>
+<h1 id="linux-macos和freebsd压缩包">Linux, macOS和FreeBSD压缩包</h1>
+<p><a href="https://golang.org/dl/">下载存档文件</a>并解压到<code>/usr/local</code></p>
+<pre><code class="language-shell">tar -C /usr/local -xzf go$VERSION.$OS-$ARCH.tar.gz
+</code></pre>
+<p>选择适合你自己的存档文件。例如：如果你要在Linux上为64位x86安装<code>Go1.2.1</code>版本。则存档文件的名称应该是<code>go1.2.1.linux-amd64.tar.gz</code></p>
+<blockquote>
+<p>通常，这些命令必须以root用户或通过sudo运行<br>
+将<code>/usr/local/go/bin</code>添加到系统环境变量中。或执行以下命令添加到<code>/etc/profile</code>或<code>$HOME/.profile</code></p>
+</blockquote>
+<pre><code class="language-shell">export PATH=$PATH:/usr/local/go/bin
+</code></pre>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[NIO 中需要注意⚠️的事项]]></title>
         <id>https://whimthen.github.io/post/nio_notice/</id>
