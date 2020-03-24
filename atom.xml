@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://whimthen.github.io</id>
     <title>自留地</title>
-    <updated>2020-03-24T02:17:58.559Z</updated>
+    <updated>2020-03-24T04:06:46.752Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://whimthen.github.io"/>
     <link rel="self" href="https://whimthen.github.io/atom.xml"/>
@@ -10,6 +10,104 @@
     <logo>https://whimthen.github.io/images/avatar.png</logo>
     <icon>https://whimthen.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, 自留地</rights>
+    <entry>
+        <title type="html"><![CDATA[1.2 Go: 最佳实践]]></title>
+        <id>https://whimthen.github.io/post/ts0GeTvyX/</id>
+        <link href="https://whimthen.github.io/post/ts0GeTvyX/">
+        </link>
+        <updated>2020-03-24T04:06:04.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="引言">引言</h1>
+<p>Go作为一门新的编程语言，借鉴了很多语言的想法。Go具有非同寻常的特性，使得在编程上和其他语言有所不同。将<code>C++</code>或<code>Java</code>程序直接转换为Go不太可能产生令人满意的结果-Java程序是用Java而不是Go编写的。另一方面，从Go角度考虑问题可能会成功但完全不同的程序。换句话说，要编写好语言，重要的是要了解它的特性和语法。了解Go变成中已建立的约定(如: 命名、格式、结构等)也很重要，这样编写的程序将易于其他程序员理解。</p>
+<p>本章将说明编写清晰、常用的Go语法代码提示。展示了<a href="https://golang.org/ref/spec">语言规范</a>和<a href="https://whimthen.github.io/post/kTvbgt91b/">如何编写Go代码</a>，应该首先阅读这些内容。</p>
+<h1 id="格式化">格式化</h1>
+<p>格式问题是最有争议但后果最不严重的问题。通常我们可以适应不通的格式样式，但是如果不必这样做会更好，如果每个人都遵循相同的央视，则花费再央视上的时间会更少。问题是如何在没有冗长的说明性风格指南的情况下处理这种理想中的事情。</p>
+<p>使用Go，我们可以采用一种不寻常的方法，让机器处理大多数格式化问题。<code>gofmt</code>程序(也可作为<code>go fmt</code>使用，它再程序包级别而不是源文件级别运行)读取Go程序文件，并以锁紧和垂直对齐的标准样式格式化源代码，并保留注释，在必要时重新格式化注释。</p>
+<p>例如: 无需花时间对结构字段上的注释进行排列，<code>Gofmt</code>将做到这一点。</p>
+<pre><code class="language-go">type T struct {
+    name string // name of the object
+    value int // its value
+}
+</code></pre>
+<p><code>gofmt</code>使各列对齐后:</p>
+<pre><code class="language-go">type T struct {
+    name    string // name of the object
+    value   int    // its value
+}
+</code></pre>
+<p>标准库中的所有Go代码均已使用gofmt格式化。</p>
+<p>一些简短的格式详细信息:</p>
+<ul>
+<li>缩进: 默认情况下<code>gofmt</code>使用制表符进行缩进，仅在必要时使用空格。</li>
+<li>行长度: Go没有行长限制，如果感觉太长，可以将其包裹起来并用制表符缩进。</li>
+<li>括号: Go需要的括号比C和Java的更少，控制语句(if, for, switch)的语法中没有括号。而且运算符优先级层次更短更清晰，因此<code>x&lt;&lt;8 + y&lt;&lt;16</code>表示空格意味什么，与其他语言不同。</li>
+</ul>
+<h1 id="注释">注释</h1>
+<p>Go提供了C样式的<code>/* */</code>块注释和C++样式的<code>//</code>行注释。行注释很平常，块注释主要用于程序包注释，但在表达式中很有用，或者禁用大量代码。</p>
+<p><code>godoc</code>可以处理Go源文件以提取有关软件包内容的文档。在顶级声明之前出现的注释(没有中间换行符)与声明一起被提取，以用作该项目的解释行文本。这些注释的性质和样式决定了godoc生成的文档的质量。</p>
+<p>每个包都应该在<code>package</code>声明之前有一个包注释(块注释)。对于多个文件包，包注释仅需要出现在一个文件中，任何一个都可以。包注释应该介绍该包，并提供与该包有关的信息。它会出现在godoc页面上，应及时设置详细文档。</p>
+<pre><code class="language-go">/*
+Package regexp implements a simple library for regular expressions.
+
+The syntax of the regular expressions accepted is:
+
+    regexp:
+        concatenation { '|' concatenation }
+    concatenation:
+        { closure }
+    closure:
+        term [ '*' | '+' | '?' ]
+    term:
+        '^'
+        '$'
+        '.'
+        character
+        '[' [ '^' ] character-ranges ']'
+        '(' regexp ')'
+*/
+package regexp
+</code></pre>
+<p>如果包很简单，则包注释可以使用行注释:</p>
+<pre><code class="language-go">// Package path implements utility routines for
+// manipulating slash-separated filename paths.
+package comment
+</code></pre>
+<p>注释不需要额外的格式，例如星号标识。生成的注释甚至不会以固定宽度的字体显示，因此不需要以来对齐间距。<code>godoc</code>(例如: <code>gofmt</code>)会处理这些问题。注释是未经解释的纯文本，因此HTML和其他注释（如<code>_this_</code>）将逐字复制，因此不应使用。godoc所做的一种调整是以固定宽度的字体显示缩进的文本，适用于程序片段。</p>
+<p>根据上下文的不同，godoc可能甚至不会重新格式化注释，因此请确保它们看起来直截了当: 使用正确的拼写，标点和句子结构，折叠长行等。</p>
+<p>在包中，顶级声明之前的任何注释都将用作该声明的文档注释。程序中的每个导出(大写)名称都应带有文档注释。</p>
+<p>Doc注释最好作为完整的句子使用，它可以进行各种各样的自动演示。第一句应为单句摘要，以声明的名称开头。</p>
+<pre><code class="language-go">// Compile parses a regular expression and returns, if successful,
+// a Regexp that can be used to match against text.
+func Compile(str string) (*Regexp, error) {
+</code></pre>
+<p>如果每个文档注释都以其描述的项目名称开头，则可以使用go工具的doc子命令并通过grep运行输出。想象一下，您忘记了名称&quot;Compile&quot;，但正在寻找正则表达式的解析函数，因此您运行了命令:</p>
+<pre><code class="language-shell">$ go doc -all regexp | grep -i parse
+</code></pre>
+<p>如果包中的所有文档注释均以&quot;This function...&quot;开头，则grep不会帮助您记住该名称。但是，因为该软件包以每个文档注释的名称开头，所以您会看到类似这样的内容，会记住您要查找的单词。</p>
+<pre><code class="language-shell">$ go doc -all regexp | grep -i parse
+    Compile parses a regular expression and returns, if successful, a Regexp
+    MustCompile is like Compile but panics if the expression cannot be parsed.
+    parsed. It simplifies safe initialization of global variables holding
+$
+</code></pre>
+<p>Go的声明语法允许对声明进行分组。单个文档注释可以引入一组相关的常量或变量。由于整个声明都已表达，因此这样的注释常常是含糊的。</p>
+<pre><code class="language-go">// Error codes returned by failures to parse an expression.
+var (
+    ErrInternal      = errors.New(&quot;regexp: internal error&quot;)
+    ErrUnmatchedLpar = errors.New(&quot;regexp: unmatched '('&quot;)
+    ErrUnmatchedRpar = errors.New(&quot;regexp: unmatched ')'&quot;)
+    ...
+)
+</code></pre>
+<p>分组还可以指示项目之间的关系，例如一组变量受互斥锁保护的事实。</p>
+<pre><code class="language-go">var (
+    countLock   sync.Mutex
+    inputCount  uint32
+    outputCount uint32
+    errorCount  uint32
+)
+</code></pre>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[1.1 - Go: 如何编写Go代码]]></title>
         <id>https://whimthen.github.io/post/kTvbgt91b/</id>
