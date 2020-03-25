@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://whimthen.github.io</id>
     <title>自留地</title>
-    <updated>2020-03-25T03:40:40.708Z</updated>
+    <updated>2020-03-25T03:45:21.222Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://whimthen.github.io"/>
     <link rel="self" href="https://whimthen.github.io/atom.xml"/>
@@ -58,7 +58,7 @@ codeUsing(f, d)
 <p>该语句声明了两个变量<code>f</code>和<code>err</code>。几行后，对<code>f.Stat</code>的调用显示为:</p>
 <pre><code class="language-go">d, err := f.Stat()
 </code></pre>
-<p>看起来好像声明了<code>d</code>和<code>err</code>。但是请注意，<code>err</code>出现在两个语句中。这种重复是合法的：<code>err</code>由第一个语句声明，但仅在第二个语句中重新分配。这意味着对<code>f.Stat</code>的调用将使用上面声明的现<code>有err</code>变量，并为其赋予一个新值。</p>
+<p>看起来好像声明了<code>d</code>和<code>err</code>。但是请注意，<code>err</code>出现在两个语句中。这种重复是合法的：<code>err</code>由第一个语句声明，但仅在第二个语句中重新分配。这意味着对<code>f.Stat</code>的调用将使用上面声明的现有<code>err</code>变量，并为其赋予一个新值。</p>
 <p>在<code>:=</code>声明中，即使已经声明了变量<code>v</code>，也可能会出现它，条件是:</p>
 <ul>
 <li>此声明与v的现有声明在同一作用域内(如果v已在外部作用域中声明，则该声明将创建一个新变量)</li>

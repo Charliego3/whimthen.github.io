@@ -4,7 +4,7 @@
 <meta name="description" content=""/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>1.2.2 - Go: 最佳实践(流程控制结构) | 自留地</title>
-<link rel="shortcut icon" href="https://whimthen.github.io/favicon.ico?v=1585107638576">
+<link rel="shortcut icon" href="https://whimthen.github.io/favicon.ico?v=1585107919448">
 <link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.css" rel="stylesheet">
 <link rel="stylesheet" href="https://whimthen.github.io/styles/main.css">
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
@@ -150,7 +150,7 @@ codeUsing(f, d)
 <p>该语句声明了两个变量<code>f</code>和<code>err</code>。几行后，对<code>f.Stat</code>的调用显示为:</p>
 <pre><code class="language-go">d, err := f.Stat()
 </code></pre>
-<p>看起来好像声明了<code>d</code>和<code>err</code>。但是请注意，<code>err</code>出现在两个语句中。这种重复是合法的：<code>err</code>由第一个语句声明，但仅在第二个语句中重新分配。这意味着对<code>f.Stat</code>的调用将使用上面声明的现<code>有err</code>变量，并为其赋予一个新值。</p>
+<p>看起来好像声明了<code>d</code>和<code>err</code>。但是请注意，<code>err</code>出现在两个语句中。这种重复是合法的：<code>err</code>由第一个语句声明，但仅在第二个语句中重新分配。这意味着对<code>f.Stat</code>的调用将使用上面声明的现有<code>err</code>变量，并为其赋予一个新值。</p>
 <p>在<code>:=</code>声明中，即使已经声明了变量<code>v</code>，也可能会出现它，条件是:</p>
 <ul>
 <li>此声明与v的现有声明在同一作用域内(如果v已在外部作用域中声明，则该声明将创建一个新变量)</li>
