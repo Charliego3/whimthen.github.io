@@ -1,0 +1,375 @@
+<html>
+<head>
+    <meta charset="utf-8"/>
+<meta name="description" content=""/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>1.2.2 - Go: 最佳实践(流程控制结构) | 自留地</title>
+<link rel="shortcut icon" href="https://whimthen.github.io/favicon.ico?v=1585107638576">
+<link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.css" rel="stylesheet">
+<link rel="stylesheet" href="https://whimthen.github.io/styles/main.css">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dart.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/go.min.js"></script>
+<script src="https://cdn.bootcss.com/moment.js/2.23.0/moment.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+        crossorigin="anonymous"></script>
+
+<!-- DEMO JS -->
+<script src="media/scripts/index.js"></script>
+
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <div class="navbar-brand">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            自留地
+        </div>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+                <div class="nav-item">
+                    
+                        <a href="/" class="menu gt-a-link">
+                            首页
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/archives" class="menu gt-a-link">
+                            归档
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/tags" class="menu gt-a-link">
+                            标签
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/post/about" class="menu gt-a-link">
+                            关于
+                        </a>
+                    
+                </div>
+            
+        </div>
+    </div>
+</nav>
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    1.2.2 - Go: 最佳实践(流程控制结构)
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2020-03-25 ·
+                    </time>
+                    
+                        <a href="https://whimthen.github.io/tag/Pinmphdri/" class="post-tags">
+                            # effective go
+                        </a>
+                    
+                        <a href="https://whimthen.github.io/tag/08mZuUov2/" class="post-tags">
+                            # go
+                        </a>
+                    
+                        <a href="https://whimthen.github.io/tag/sdAdoJw8g0/" class="post-tags">
+                            # golang
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <blockquote>
+<p>Go的流程控制结构与C相关，但在重要方面有所不同。没有<code>do while</code>和<code>while</code>循环，只有<code>for</code>。<code>switch</code>很灵活。<code>if</code>和<code>switch</code>接受可选的初始化语句，像<code>for</code>一样。<code>break</code>和<code>continue</code>语句带有一个可选标签来标识要中断或继续的内容。包括了类型选择和多路复用选择器<code>select</code>。语法也略有不同：没有括号，并且主体必须始终用大括号分隔。</p>
+</blockquote>
+<h2 id="if">if</h2>
+<p>在Go中，一个简单的if看起来像这样:</p>
+<pre><code class="language-go">if x &gt; 0 {
+    return y
+}
+</code></pre>
+<p>在编写多行的<code>if</code>语句时必须使用括号。无论如何这样做都是好的风格，尤其是当主体包含控制语句(例如<code>return</code>或<code>break</code>)时。</p>
+<p>由于<code>if</code>和<code>switch</code>接受初始化语句，因此通常会看到用来设置局部变量的语句。</p>
+<pre><code class="language-go">if err := file.Chmod(0664); err != nil {
+    log.Print(err)
+    return err
+}
+</code></pre>
+<p>在Go库中，当if语句不进入下一条语句时(即主体以<code>break</code>，<code>continue</code>，<code>goto</code>或<code>return</code>结尾)时，将省略不必要的<code>else</code>。</p>
+<pre><code class="language-go">f, err := os.Open(name)
+if err != nil {
+    return err
+}
+codeUsing(f)
+</code></pre>
+<p>这是一种常见情况的示例，在这种情况下，代码必须防止出现一系列错误情况。如果不进入if代码块，将向下继续执行，从而消除了出现错误的情况。由于错误一般以return语句结束，因此代码中不需要else语句。</p>
+<pre><code class="language-go">f, err := os.Open(name)
+if err != nil {
+    return err
+}
+d, err := f.Stat()
+if err != nil {
+    f.Close()
+    return err
+}
+codeUsing(f, d)
+</code></pre>
+<h2 id="重新声明和重新分配">重新声明和重新分配</h2>
+<p>上面最后一个示例展示了简短声明的详细信息。调用<code>os.Open</code>的声明为:</p>
+<pre><code class="language-go">f, err := os.Open(name)
+</code></pre>
+<p>该语句声明了两个变量<code>f</code>和<code>err</code>。几行后，对<code>f.Stat</code>的调用显示为:</p>
+<pre><code class="language-go">d, err := f.Stat()
+</code></pre>
+<p>看起来好像声明了<code>d</code>和<code>err</code>。但是请注意，<code>err</code>出现在两个语句中。这种重复是合法的：<code>err</code>由第一个语句声明，但仅在第二个语句中重新分配。这意味着对<code>f.Stat</code>的调用将使用上面声明的现<code>有err</code>变量，并为其赋予一个新值。</p>
+<p>在<code>:=</code>声明中，即使已经声明了变量<code>v</code>，也可能会出现它，条件是:</p>
+<ul>
+<li>此声明与v的现有声明在同一作用域内(如果v已在外部作用域中声明，则该声明将创建一个新变量)</li>
+<li>并且初始化中的对应值可分配给v</li>
+<li>声明创建了至少一个其他变量。</li>
+</ul>
+<p>这种不寻常的特性通常很实用，例如在<code>if-else</code>长链中，可以轻松的使用单个err值。</p>
+<p>值得注意的是，在Go中，函数参数和返回值的范围与函数主体相同，即使它们按词法出现在包围主体的括号之外。</p>
+<h2 id="for">for</h2>
+<p>Go <code>for</code>循环类似于C，但不相同。它统一了<code>for</code>和<code>while</code>并且没有<code>do while</code>。共有三种形式，其中只有一种具有分号。</p>
+<pre><code class="language-go">// Like a C for
+for init; condition; post { }
+
+// Like a C while
+for condition { }
+
+// Like a C for(;;)
+for { }
+</code></pre>
+<p>简短声明使在循环中轻松声明索引变量变得容易。</p>
+<pre><code class="language-go">sum := 0
+for i := 0; i &lt; 10; i++ {
+    sum += i
+}
+</code></pre>
+<p>如果要遍历<code>array</code>, <code>slice</code>, <code>string</code>或<code>map</code>，或从<code>channel</code>读取，则<code>range</code>可以管理该循环。</p>
+<pre><code class="language-go">for key, value := range oldMap {
+    newMap[key] = value
+}
+</code></pre>
+<p>如果只需要<code>range(键或索引)</code>中的第一项，请删除第二项:</p>
+<pre><code class="language-go">for key := range m {
+    if key.expired() {
+        delete(m, key)
+    }
+}
+</code></pre>
+<p>如果只需要<code>range(值)</code>中的第二项，则使用<a href="https://golang.org/doc/effective_go.html#blank">空白标识符</a>(<code>下划线</code>)来丢弃第一项:</p>
+<pre><code class="language-go">sum := 0
+for _, value := range array {
+    sum += value
+}
+</code></pre>
+<p>对于字符串，<code>range</code>做了更多事情，通过解析UTF-8来分解单个Unicode代码点。错误的编码会占用一个字节并产生替换符U+FFFD(<code>rune</code>(具有关联的内置类型)是用于单个Unicode代码点的Go术语。有关详细信息，请参见<a href="https://golang.org/ref/spec#Rune_literals">语言规范</a>)</p>
+<pre><code class="language-go">for pos, char := range &quot;日本\x80語&quot; { // \x80 is an illegal UTF-8 encoding
+    fmt.Printf(&quot;character %#U starts at byte position %d\n&quot;, char, pos)
+}
+</code></pre>
+<p>打印结果:</p>
+<pre><code class="language-go">character U+65E5 '日' starts at byte position 0
+character U+672C '本' starts at byte position 3
+character U+FFFD '�' starts at byte position 6
+character U+8A9E '語' starts at byte position 7
+</code></pre>
+<p>最后，Go没有逗号运算符，而<code>++</code>和<code>--</code>是语句而不是表达式。如果想在<code>for</code>循环中使用多个变量你应该使用多个赋值语句(尽管这排除了++和--)。</p>
+<pre><code class="language-go">// Reverse a
+for i, j := 0, len(a)-1; i &lt; j; i, j = i+1, j-1 {
+    a[i], a[j] = a[j], a[i]
+}
+</code></pre>
+<h2 id="switch">switch</h2>
+<p>Go的switch语句比C的更通用。表达式不必是常量，甚至不必是整数，从上到下进行评估，直到找到匹配项为止；如果该switch没有表达式，则将其设置为true。因此，尽可能的将<code>if-else-if-else</code>链编写为<code>switch</code>。</p>
+<pre><code class="language-go">func unhex(c byte) byte {
+    switch {
+    case '0' &lt;= c &amp;&amp; c &lt;= '9':
+        return c - '0'
+    case 'a' &lt;= c &amp;&amp; c &lt;= 'f':
+        return c - 'a' + 10
+    case 'A' &lt;= c &amp;&amp; c &lt;= 'F':
+        return c - 'A' + 10
+    }
+    return 0
+}
+</code></pre>
+<p>不会自动<code>full through</code>，但<code>case</code>可以用逗号分隔的列表显示。</p>
+<pre><code class="language-go">func shouldEscape(c byte) bool {
+    switch c {
+    case ' ', '?', '&amp;', '=', '#', '+', '%':
+        return true
+    }
+    return false
+}
+</code></pre>
+<p>尽管它们在Go中不像其他一些类似C的语言那样普遍，但是break语句可用于尽早终止<code>switch</code>。但是，有时需要跳出周围的循环而不是switch，而在Go中，可以通过在循环上放置标签并&quot;breaking&quot;该标签来实现。下面示例显示了两种用法。</p>
+<pre><code class="language-go">Loop:
+	for n := 0; n &lt; len(src); n += size {
+		switch {
+		case src[n] &lt; sizeOne:
+			if validateOnly {
+				break
+			}
+			size = 1
+			update(src[n])
+
+		case src[n] &lt; sizeTwo:
+			if n+1 &gt;= len(src) {
+				err = errShortInput
+				break Loop
+			}
+			if validateOnly {
+				break
+			}
+			size = 2
+			update(src[n] + src[n+1]&lt;&lt;shift)
+		}
+	}
+</code></pre>
+<p>当然，<code>continue</code>语句也接受可选标签，但仅适用于循环。<br>
+下面是一个使用两个switch语句的字节切片比较例程:</p>
+<pre><code class="language-go">// Compare returns an integer comparing the two byte slices,
+// lexicographically.
+// The result will be 0 if a == b, -1 if a &lt; b, and +1 if a &gt; b
+func Compare(a, b []byte) int {
+    for i := 0; i &lt; len(a) &amp;&amp; i &lt; len(b); i++ {
+        switch {
+        case a[i] &gt; b[i]:
+            return 1
+        case a[i] &lt; b[i]:
+            return -1
+        }
+    }
+    switch {
+    case len(a) &gt; len(b):
+        return 1
+    case len(a) &lt; len(b):
+        return -1
+    }
+    return 0
+}
+</code></pre>
+<h2 id="类型检查">类型检查</h2>
+<p><code>switch</code>也可以用来检查接口变量的动态类型。这种类型switch使用类型断言声明的语法，并在括号内使用关键字<code>type</code>。如果switch在表达式中声明了变量，则该变量在每个子句中将具有相应的类型。在这种情况下重用名称也是惯用的，实际上是在每种情况下声明一个具有相同名称但类型不同的新变量。</p>
+<pre><code class="language-go">var t interface{}
+t = functionOfSomeType()
+switch t := t.(type) {
+default:
+    fmt.Printf(&quot;unexpected type %T\n&quot;, t)     // %T prints whatever type t has
+case bool:
+    fmt.Printf(&quot;boolean %t\n&quot;, t)             // t has type bool
+case int:
+    fmt.Printf(&quot;integer %d\n&quot;, t)             // t has type int
+case *bool:
+    fmt.Printf(&quot;pointer to boolean %t\n&quot;, *t) // t has type *bool
+case *int:
+    fmt.Printf(&quot;pointer to integer %d\n&quot;, *t) // t has type *int
+}
+</code></pre>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://whimthen.github.io/post/MrgRqSA0X/" class="post-title gt-a-link">
+                    1.2.1 - Go: 最佳实践(命名、分号)
+                </a>
+            </div>
+        
+
+        
+            
+                <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: '516a9843e72b0a3e198b',
+    clientSecret: 'ccc6c5a8ea4aa0c9e4c36c87cb9c1ef54b5bc97c',
+    repo: 'whimthen.github.io',
+    owner: 'whimthen',
+    admin: ['whimthen'],
+    id: location.pathname,      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+            
+
+            
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">温故而知新</div>
+    <div class="social-container">
+        
+            
+                <a href="https://github.com/whimthen" target="_blank">
+                    <i class="fab fa-github gt-c-content-color-first"></i>
+                </a>
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a href="https://whimthen.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+<script>
+    hljs.initHighlightingOnLoad()
+</script>
+
+
+    </div>
+</div>
+</body>
+</html>
