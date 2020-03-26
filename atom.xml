@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://whimthen.github.io</id>
     <title>自留地</title>
-    <updated>2020-03-26T02:21:01.027Z</updated>
+    <updated>2020-03-26T03:39:14.884Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://whimthen.github.io"/>
     <link rel="self" href="https://whimthen.github.io/atom.xml"/>
@@ -10,6 +10,134 @@
     <logo>https://whimthen.github.io/images/avatar.png</logo>
     <icon>https://whimthen.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, 自留地</rights>
+    <entry>
+        <title type="html"><![CDATA[1.2.3 - Go: 最佳实践(函数)]]></title>
+        <id>https://whimthen.github.io/post/SDCTjJ1vS/</id>
+        <link href="https://whimthen.github.io/post/SDCTjJ1vS/">
+        </link>
+        <updated>2020-03-26T03:38:28.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="多返回值">多返回值</h1>
+<p>Go的不同寻常功能之一就是函数和方法可以有多个返回值。这种形式可用于改进C程序中的一些笨拙的习惯用法。</p>
+<p>在C语言中，写入错误由负数表示，错误代码被隐藏在易失性位置中。在Go中<code>Write</code>可以返回一个<code>count</code>和一个<code>error</code>: &quot;Yes, you wrote some bytes but not all of them because you filled the device&quot;。<code>os</code>包中<code>Write</code>方法的签名为:</p>
+<pre><code class="language-go">func (file *File) Write(b []byte) (n int, err error)
+</code></pre>
+<p>正如文档中所说，当<code>n != len(b)</code>时，返回写入的字节数和非<code>nil</code>的错误。这是一种常见的形式。有关更多示例，请参见错误处理部分。</p>
+<p>类似的方法避免了将指针传递给返回值以模拟参考参数的需要。这是一个简单的函数，可从字节切片中的某个位置获取一个数字，然后返回该数字和下一个位置。</p>
+<pre><code class="language-go">func nextInt(b []byte, i int) (int, int) {
+    for ; i &lt; len(b) &amp;&amp; !isDigit(b[i]); i++ {
+    }
+    x := 0
+    for ; i &lt; len(b) &amp;&amp; isDigit(b[i]); i++ {
+        x = x*10 + int(b[i]) - '0'
+    }
+    return x, i
+}
+</code></pre>
+<p>你可以用它来遍历接收的切片b:</p>
+<pre><code class="language-go">for i := 0; i &lt; len(b); {
+    x, i = nextInt(b, i)
+    fmt.Println(x)
+}
+</code></pre>
+<h1 id="结果参数命名返回值命名">结果参数命名(返回值命名)</h1>
+<p>可以给Go函数的返回或结果“参数”指定名称，并将其用作常规变量，就像传入的参数一样。命名后，函数开始时会将它们初始化为零值。如果函数执行不带参数的<code>return</code>语句，则将结果参数的当前值用作返回值。</p>
+<p>名称不是强制性的，但可以使代码更简短: 结果参数名称可以提高阅读性。如果我们命名nextInt的结果，则很清楚的就可以知道返回的int是什么含义。</p>
+<pre><code class="language-go">func nextInt(b []byte, pos int) (value, nextPos int) {
+</code></pre>
+<p>由于命名结果参数被初始化为零值并绑定到返回值，因此它们既可以简化又可以说明含义。这是使用它们的<code>io.ReadFull</code>版本:</p>
+<pre><code class="language-go">func ReadFull(r Reader, buf []byte) (n int, err error) {
+    for len(buf) &gt; 0 &amp;&amp; err == nil {
+        var nr int
+        nr, err = r.Read(buf)
+        n += nr
+        buf = buf[nr:]
+    }
+    return
+}
+</code></pre>
+<h1 id="defer延迟">Defer(延迟)</h1>
+<p>Go的<code>defer</code>语句调度一个函数调用(延迟函数)在执行延迟的函数返回之前立即执行。这是一种不寻常但有效的处理情况的方法，例如无论函数返回哪个路径都必须释放资源。典型的例子是解锁互斥锁或关闭文件。</p>
+<pre><code class="language-go">// Contents returns the file's contents as a string.
+func Contents(filename string) (string, error) {
+    f, err := os.Open(filename)
+    if err != nil {
+        return &quot;&quot;, err
+    }
+    defer f.Close()  // f.Close will run when we're finished.
+
+    var result []byte
+    buf := make([]byte, 100)
+    for {
+        n, err := f.Read(buf[0:])
+        result = append(result, buf[0:n]...) // append is discussed later.
+        if err != nil {
+            if err == io.EOF {
+                break
+            }
+            return &quot;&quot;, err  // f will be closed if we return here.
+        }
+    }
+    return string(result), nil // f will be closed if we return here.
+}
+</code></pre>
+<p>延迟执行对诸如<code>Close</code>之类的函数有两个优点:</p>
+<ol>
+<li>它保证了你永远不会忘记关闭文件，如果以后编辑函数以添加新的返回路径，则很容易犯此错误。</li>
+<li>这意味着关闭位于打开处附近，这比将其放置在函数末尾清晰得多。</li>
+</ol>
+<p>延迟函数(如果函数是方法，则包括接收方)的参数在延迟执行时而不是在调用执行时进行评估。除了避免担心变量在函数执行时会更改值之外，这还意味着单个延迟的调用栈可以延迟多个函数的执行。<br>
+这是一个愚蠢的例子:</p>
+<pre><code class="language-go">for i := 0; i &lt; 5; i++ {
+    defer fmt.Printf(&quot;%d &quot;, i)
+}
+</code></pre>
+<p>延迟语句按(后进先出)<code>LIFO</code>顺序执行，因此该代码将在函数返回时导致打印<code>4 3 2 1 0</code>。一个更合理的示例是一种通过程序跟踪函数执行的简单方法。我们可以编写一些简单的跟踪例程，如下所示:</p>
+<pre><code class="language-go">func trace(s string)   { fmt.Println(&quot;entering:&quot;, s) }
+func untrace(s string) { fmt.Println(&quot;leaving:&quot;, s) }
+
+// Use them like this:
+func a() {
+    trace(&quot;a&quot;)
+    defer untrace(&quot;a&quot;)
+    // do something....
+}
+</code></pre>
+<p>我们可以利用以下事实来做得更好，即在执行延期时会评估延期函数的参数。跟踪例程可以将参数设置为取消跟踪例程。这个例子:</p>
+<pre><code class="language-go">func trace(s string) string {
+    fmt.Println(&quot;entering:&quot;, s)
+    return s
+}
+
+func un(s string) {
+    fmt.Println(&quot;leaving:&quot;, s)
+}
+
+func a() {
+    defer un(trace(&quot;a&quot;))
+    fmt.Println(&quot;in a&quot;)
+}
+
+func b() {
+    defer un(trace(&quot;b&quot;))
+    fmt.Println(&quot;in b&quot;)
+    a()
+}
+
+func main() {
+    b()
+}
+</code></pre>
+<p>输出结果:</p>
+<pre><code class="language-shell">entering: b
+in b
+entering: a
+in a
+leaving: a
+leaving: b
+</code></pre>
+<p>对于习惯于使用其他语言进行块级资源管理的程序员来说，延迟似乎很奇怪，但是它最有趣，功能最强大的应用正是基于它不是基于块而是基于函数的事实。在<code>panic</code>和<code>recover</code>部分，我们将看到其可能性的另一个示例。</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[1.2.2 - Go: 最佳实践(流程控制)]]></title>
         <id>https://whimthen.github.io/post/pVvli46oS/</id>
