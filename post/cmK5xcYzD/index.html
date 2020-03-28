@@ -1,0 +1,498 @@
+<html>
+<head>
+    <meta charset="utf-8"/>
+<meta name="description" content=""/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>1.2.4 - Go: 最佳实践(内建函数、数据结构) | 自留地</title>
+<link rel="shortcut icon" href="https://whimthen.github.io/favicon.ico?v=1585363079959">
+<link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.css" rel="stylesheet">
+<link rel="stylesheet" href="https://whimthen.github.io/styles/main.css">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dart.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/go.min.js"></script>
+<script src="https://cdn.bootcss.com/moment.js/2.23.0/moment.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+        crossorigin="anonymous"></script>
+
+<!-- DEMO JS -->
+<script src="media/scripts/index.js"></script>
+
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <div class="navbar-brand">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            自留地
+        </div>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+                <div class="nav-item">
+                    
+                        <a href="/" class="menu gt-a-link">
+                            首页
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/archives" class="menu gt-a-link">
+                            归档
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/tags" class="menu gt-a-link">
+                            标签
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/post/about" class="menu gt-a-link">
+                            关于
+                        </a>
+                    
+                </div>
+            
+        </div>
+    </div>
+</nav>
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    1.2.4 - Go: 最佳实践(内建函数、数据结构)
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2020-03-28 ·
+                    </time>
+                    
+                        <a href="https://whimthen.github.io/tag/Pinmphdri/" class="post-tags">
+                            # effective go
+                        </a>
+                    
+                        <a href="https://whimthen.github.io/tag/08mZuUov2/" class="post-tags">
+                            # go
+                        </a>
+                    
+                        <a href="https://whimthen.github.io/tag/sdAdoJw8g0/" class="post-tags">
+                            # golang
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h1 id="介绍">介绍</h1>
+<p>Go中有两个分配语句。内置函数<code>new</code>和<code>make</code>。它们执行不同的操作并应用于不同的类型，这可能会令人困惑，但是规则很简单。</p>
+<h1 id="使用new分配内存">使用<code>new</code>分配内存</h1>
+<p>这是一个分配内存的内置函数，但与其他语言中的同名函数不同，它不会初始化内存，只会将其清零。也就是说，<code>new(T)</code>为类型<code>T</code>的新项目分配零存储空间，并返回其地址，即类型<code>*T</code>的值。在Go术语中，它返回一个指向新分配的<code>T</code>类型零值的指针。</p>
+<p>由于new返回的内存为零，因此在设计数据结构时安排使用每种类型的零值而无需进一步初始化将很有帮助。这意味着用户可以使用<code>new</code>创建一个数据结构并开始工作。例如，<code>bytes.Buffer</code>的文档指出“Buffer的零值是准备使用的空缓冲区”。同样，<code>sync.Mutex</code>没有显式构造函数或Init方法。而是将<code>sync.Mutex</code>的零值定义为未锁定的互斥锁。</p>
+<p>零值属性在工作中很有用。例如如下类型定义:</p>
+<pre><code class="language-go">type SyncedBuffer struct {
+    lock    sync.Mutex
+    buffer  bytes.Buffer
+}
+</code></pre>
+<p><code>SyncedBuffer</code>类型的值也可以在分配后或声明后立即使用。在下一个代码段中，<code>p</code>和<code>v</code>都可以正常使用，而无需进一步分配。</p>
+<pre><code class="language-go">p := new(SyncedBuffer)  // type *SyncedBuffer
+var v SyncedBuffer      // type  SyncedBuffer
+</code></pre>
+<h1 id="构造函数和a-hrefcompositeliteral复合字面量asup1sup">构造函数和<a href="#compositeLiteral">复合字面量</a><sup>1</sup></h1>
+<p>有时零值不够好，因此需要初始化构造函数，如下例中从包<code>os</code>派生的那样。</p>
+<pre><code class="language-go">func NewFile(fd int, name string) *File {
+    if fd &lt; 0 {
+        return nil
+    }
+    f := new(File)
+    f.fd = fd
+    f.name = name
+    f.dirinfo = nil
+    f.nepipe = 0
+    return f
+}
+</code></pre>
+<p>我们可以使用复合字面量来简化它，该字面量是在每次求值时都会创建一个新实例的表达式。</p>
+<pre><code class="language-go">func NewFile(fd int, name string) *File {
+    if fd &lt; 0 {
+        return nil
+    }
+    f := File{fd, name, nil, 0}
+    return &amp;f
+}
+</code></pre>
+<p>注意，与C语言不同，返回局部变量的地址是完全可以的。函数返回后，与变量关联的存储将保留。实际上，采用复合字面量的地址会在每次对其求值时分配一个新实例，因此我们可以将最后两行结合在一起。</p>
+<pre><code class="language-go">return &amp;File{fd, name, nil, 0}
+</code></pre>
+<p>复合字面量的字段按顺序排列，并且必须全部存在。但是，通过将元素显式标记为<code>field: value</code>对，初始化器可以按任意顺序出现，而缺失的字段则保留为各自的零值。因此我们可以修改为:</p>
+<pre><code class="language-go">return &amp;File{fd: fd, name: name}
+</code></pre>
+<p>在特殊情况下，如果一个复合文字完全不包含任何字段，它将为该类型创建一个零值。表达式<code>new(File)</code>和<code>&amp;File {}</code>是等效的。</p>
+<p>也可以为数组，切片和映射创建复合字面量，其中字段标签为索引或映射键。在这些示例中，无论<code>Enone</code>，<code>Eio</code>和<code>Einval</code>的值是什么，初始化都可以工作，只要它们是不同的即可。</p>
+<pre><code class="language-go">a := [...]string   {Enone: &quot;no error&quot;, Eio: &quot;Eio&quot;, Einval: &quot;invalid argument&quot;}
+s := []string      {Enone: &quot;no error&quot;, Eio: &quot;Eio&quot;, Einval: &quot;invalid argument&quot;}
+m := map[int]string{Enone: &quot;no error&quot;, Eio: &quot;Eio&quot;, Einval: &quot;invalid argument&quot;}
+</code></pre>
+<blockquote>
+<p><span id="compositeLiteral">1. 复合字面量: 关于Go中的复合字面量更多的解释可以查看 https://studygolang.com/articles/12913</span></p>
+</blockquote>
+<h1 id="使用make分配内存">使用<code>make</code>分配内存</h1>
+<p>内置函数<code>make(T, args)</code>的目的不同于<code>new(T)</code>。它仅创建<code>slice</code>，<code>map</code>和<code>channel</code>，并且返回类型<code>T</code>(不是<code>*T</code>)的初始化值(未归零)。区别的原因是这三种类型在底层表示了对在使用之前必须初始化的数据结构的引用。例如，切片是一个三项描述符，其中包含指向数据(数组内部)，长度和容量的指针，在初始化这些之前，切片为<code>nil</code>。对于<code>slice</code>，<code>map</code>和<code>channel</code>，<code>make</code>初始化内部数据结构并准备要使用的值。例如:</p>
+<pre><code class="language-go">make([]int, 10, 100)
+</code></pre>
+<p>分配一个100个整数的数组，然后创建一个长度为10，容量为100的切片结构，指向该数组的前10个元素。(创建切片时，可以省略容量；有关更多信息，请参见切片部分。)相比之下，<code>new([]int)</code>返回指向新分配的零切片结构的指针，也就是说，指向<code>nil</code>切片值的指针。</p>
+<p>这些示例说明了<code>new</code>和<code>make</code>之间的区别。</p>
+<pre><code class="language-go">var p *[]int = new([]int)       // 分配切片; *p == nil; 很少用
+var v  []int = make([]int, 100) // 切片v现在引用一个包含100个整数的新数组
+
+// 不必要，过于复杂:
+var p *[]int = new([]int)
+*p = make([]int, 100, 100)
+
+// 常用方式:
+v := make([]int, 100)
+</code></pre>
+<p>请记住，<code>make</code>仅适用于<code>slice</code>，<code>map</code>和<code>channel</code>，不会返回指针。要获得显式指针，请使用new分配或显式获取变量的地址。</p>
+<h1 id="数组">数组</h1>
+<p>数组在计划内存的详细布局时很有用，有时可以避免分配。<br>
+在Go和C中，数组的工作方式之间存在主要差异。在Go中:</p>
+<ul>
+<li>数组是值。将一个数组分配给另一个数组将复制所有元素。</li>
+<li>特别是，如果将数组传递给函数，它将接收该数组的副本，而不是指向该数组的指针。</li>
+<li>数组的大小是其类型的一部分。类型<code>[10]int</code>和<code>[20]int</code>是不同的。</li>
+</ul>
+<p>数组值既有用又有更大的代价。如果您想要类C的行为和效率，可以将指针传递给数组。</p>
+<pre><code class="language-go">func Sum(a *[3]float64) (sum float64) {
+    for _, v := range *a {
+        sum += v
+    }
+    return
+}
+
+array := [...]float64{7.0, 8.5, 9.1}
+x := Sum(&amp;array)  // Note the explicit address-of operator
+</code></pre>
+<p>但是，即使这种风格也不是惯用的Go。请改用切片。</p>
+<h1 id="切片">切片</h1>
+<p>切片包装数组可为数据序列提供更通用，更强大和更方便的接口。除了具有明确维数的项(例如转换矩阵)外，Go中的大多数数组编程都是使用切片而不是简单数组完成的。</p>
+<p>切片包含对基础数组的引用，如果您将一个切片分配给另一个切片，则它们都引用同一数组。如果函数采用<code>slice</code>参数，则对<code>slice</code>的元素所做的更改将对调用者可见，这类似于将指针传递给基础数组。因此，<code>Read</code>函数可以接受切片参数，而不是指针和大小。切片内的长度设置了要读取多少数据的上限。这是包os中File类型的Read方法的签名:</p>
+<pre><code class="language-go">func (f *File) Read(buf []byte) (n int, err error)
+</code></pre>
+<p>该方法返回读取的字节数和错误值(如果有)。要读入较大缓冲区buf的前32个字节，请对缓冲区进行切片(动作)。</p>
+<pre><code class="language-go">n, err := f.Read(buf[0:32])
+</code></pre>
+<p>这种切片是普通且有效的。实际上，暂时不考虑效率，以下代码段还将读取缓冲区的前32个字节。</p>
+<pre><code class="language-go">var n int
+var err error
+for i := 0; i &lt; 32; i++ {
+    nbytes, e := f.Read(buf[i:i+1])  // Read one byte.
+    n += nbytes
+    if nbytes == 0 || e != nil {
+        err = e
+        break
+    }
+}
+</code></pre>
+<p>切片的长度可以更改，只要它仍然适合基础数组的限制即可；只需将其分配给自身的一部分即可。切片的<code>capacity</code>容量:可通过内置函数<code>cap(slice)</code>获取, 反映了切片可能采用的最大长度。这是将数据追加到切片的函数。如果数据超出容量，则会重新分配。返回结果切片。该函数使用<code>len</code>和<code>cap</code>应用于<code>nil slice</code>时合法的事实，并返回<code>0</code>。</p>
+<pre><code class="language-go">func Append(slice, data []byte) []byte {
+    l := len(slice)
+    if l + len(data) &gt; cap(slice) {  // reallocate
+        // Allocate double what's needed, for future growth.
+        newSlice := make([]byte, (l+len(data))*2)
+        // The copy function is predeclared and works for any slice type.
+        copy(newSlice, slice)
+        slice = newSlice
+    }
+    slice = slice[0:l+len(data)]
+    copy(slice[l:], data)
+    return slice
+}
+</code></pre>
+<p>之后必须返回切片，因为尽管<code>Append</code>可以修改切片的元素，但切片本身(包含指针，长度和容量的运行时数据结构)是按值传递的。</p>
+<p>通过内置函数<code>Append</code>追加到切片是非常有用的。</p>
+<h1 id="二维切片">二维切片</h1>
+<p>Go的数组和切片是一维的。要创建等效于2D数组或切片的数组，必须定义数组数组或切片切片，如下所示：</p>
+<pre><code class="language-go">type Transform [3][3]float64  // A 3x3 array, really an array of arrays.
+type LinesOfText [][]byte     // A slice of byte slices.
+</code></pre>
+<p>由于切片的长度是可变的，因此有可能使每个内部切片的长度不同。这可能是常见的情况，如<code>LinesOfText</code>示例：每行都有独立的长度。</p>
+<pre><code class="language-go">text := LinesOfText{
+	[]byte(&quot;Now is the time&quot;),
+	[]byte(&quot;for all good gophers&quot;),
+	[]byte(&quot;to bring some fun to the party.&quot;),
+}
+</code></pre>
+<p>有时有必要分配2D切片，例如，在处理像素的扫描线时可能会出现这种情况。有两种方法可以实现此目的。一种是独立分配每个切片；另一种是分配单个数组，并将单个切片指向该数组。使用哪种取决于您的应用程序。如果切片可能增大或缩小，则应独立分配它们，以免覆盖下一行；如果不是，则使用单一分配构造对象可能会更有效。作为参考，以下是这两种方法的示例。首先，一次一行：</p>
+<pre><code class="language-go">// Allocate the top-level slice.
+picture := make([][]uint8, YSize) // One row per unit of y.
+// Loop over the rows, allocating the slice for each row.
+for i := range picture {
+	picture[i] = make([]uint8, XSize)
+}
+</code></pre>
+<p>另外一种分配，分成几行：</p>
+<pre><code class="language-go">// Allocate the top-level slice, the same as before.
+picture := make([][]uint8, YSize) // One row per unit of y.
+// Allocate one large slice to hold all the pixels.
+pixels := make([]uint8, XSize*YSize) // Has type []uint8 even though picture is [][]uint8.
+// Loop over the rows, slicing each row from the front of the remaining pixels slice.
+for i := range picture {
+	picture[i], pixels = pixels[:XSize], pixels[XSize:]
+}
+</code></pre>
+<h1 id="map">Map</h1>
+<p>map是一种便捷而强大的内置数据结构，它将一种类型的值(键)与另一种类型的值(元素或值)相关联。键可以是定义了相等运算符的任何类型，例如整数，浮点数和复数，字符串，指针，接口(只要动态类型支持相等)，结构和数组。切片不能用作映射键，因为未定义相等性。像切片一样，map包含对基础数据结构的引用。如果将map作为参数传递，则更改将在调用方中可见。</p>
+<p>可以使用带有冒号分隔的键/值对的常规复合文字语法来构建map，因此在初始化过程中轻松构建它们。</p>
+<pre><code class="language-go">var timeZone = map[string]int{
+    &quot;UTC&quot;:  0*60*60,
+    &quot;EST&quot;: -5*60*60,
+    &quot;CST&quot;: -6*60*60,
+    &quot;MST&quot;: -7*60*60,
+    &quot;PST&quot;: -8*60*60,
+}
+</code></pre>
+<p>语法上分配和获取映射值看起来就像对数组和切片执行相同操作，只是索引不必是整数。</p>
+<pre><code class="language-go">offset := timeZone[&quot;EST&quot;]
+</code></pre>
+<p>尝试使用map中不存在的键来获取值时，将返回值类型的零值。例如，如果map包含整数，则查找不存在的键将返回0。</p>
+<pre><code class="language-go">attended := map[string]bool{
+    &quot;Ann&quot;: true,
+    &quot;Joe&quot;: true,
+    ...
+}
+
+if attended[person] { // will be false if person is not in the map
+    fmt.Println(person, &quot;was at the meeting&quot;)
+}
+</code></pre>
+<p>有时，您需要将缺失的条目与零值区分开。是否存在”UTC”条目或0，因为它根本不在map中？您可以采用多种分配形式进行区分。</p>
+<pre><code class="language-go">var seconds int
+var ok bool
+seconds, ok = timeZone[tz]
+</code></pre>
+<p>使用<code>, ok</code>语法可以判断map中是否存在<code>key</code>。下面的例子中，如果<code>tz</code>存在，<code>seconds</code>将被赋值并且<code>ok</code>为<code>true</code>，否则<code>seconds</code>将被设置为类型零值并且<code>ok</code>为<code>false</code>。</p>
+<pre><code class="language-go">func offset(tz string) int {
+    if seconds, ok := timeZone[tz]; ok {
+        return seconds
+    }
+    log.Println(&quot;unknown time zone:&quot;, tz)
+    return 0
+}
+</code></pre>
+<p>要在map中测试是否存在而不必担心实际值，可以使用空白标识符(<code>_</code>)代替该值的常规变量。</p>
+<pre><code class="language-go">_, present := timeZone[tz]
+</code></pre>
+<p>要删除map条目，请使用<code>delete</code>内置函数，其参数为地图和要删除的键。即使地图上已经没有<code>key</code>，也可以这样做。</p>
+<pre><code class="language-go">delete(timeZone, &quot;PDT&quot;)  // Now on Standard Time
+</code></pre>
+<h1 id="输出printing">输出(Printing)</h1>
+<p>Go中的格式化打印使用类似于C的<code>printf</code>系列的样式，但功能更丰富，更通用。这些函数位于<code>fmt</code>包中，并具有大写名称: <code>fmt.Printf</code>，<code>fmt.Fprintf</code>，<code>fmt.Sprintf</code>等。字符串函数(<code>Sprintf</code>等)返回字符串，而不是填充提供的缓冲区。</p>
+<p>你不需要提供格式字符串。对于每个<code>Printf</code>，<code>Fprintf</code>和<code>Sprintf</code>，还有另一对函数，例如<code>Print</code>和<code>Println</code>。这些函数不采用格式字符串，而是为每个参数生成默认格式。<code>Println</code>还会在参数之间插入一个空格，并在输出中添加换行符，而<code>Print</code>仅在两个操作数都不是字符串的情况下才添加空格。在此示例中，每行产生相同的输出。</p>
+<pre><code class="language-go">fmt.Printf(&quot;Hello %d\n&quot;, 23)
+fmt.Fprint(os.Stdout, &quot;Hello &quot;, 23, &quot;\n&quot;)
+fmt.Println(&quot;Hello&quot;, 23)
+fmt.Println(fmt.Sprint(&quot;Hello &quot;, 23))
+</code></pre>
+<p>格式化的打印函数<code>fmt.Fprint</code>将实现io.Writer接口的任何对象作为第一个参数；变量<code>os.Stdout</code>和<code>os.Stderr</code>是熟悉的实例。</p>
+<p>这里的事情开始与C背道而驰。首先，诸如<code>％d</code>之类的数字格式不带有标志或大小的标志；相反，打印例程使用参数的类型来决定这些属性。</p>
+<pre><code class="language-go">var x uint64 = 1&lt;&lt;64 - 1
+fmt.Printf(&quot;%d %x; %d %x\n&quot;, x, x, int64(x), int64(x))
+</code></pre>
+<p>输出结果:</p>
+<pre><code class="language-shell">18446744073709551615 ffffffffffffffff; -1 -1
+</code></pre>
+<p>如果只需要默认转换(例如，十进制表示整数)，则可以使用<code>%v</code>(表示“值”)；结果正是<code>Print</code>和<code>Println</code>将产生的结果。而且，该格式可以打印任何值，甚至可以打印数组，切片，结构和映射。</p>
+<pre><code class="language-go">fmt.Printf(&quot;%v\n&quot;, timeZone)  // or just fmt.Println(timeZone)
+</code></pre>
+<p>输出结果:</p>
+<pre><code class="language-shell">map[CST:-21600 EST:-18000 MST:-25200 PST:-28800 UTC:0]
+</code></pre>
+<p>对于map，<code>Printf</code>和其他格式化输出函数将按字母顺序对输出进行排序。</p>
+<p>打印结构时，修改后的格式<code>%+v</code>用其名称注释结构的字段，对于任何值，备用格式<code>%#v</code>以完整的Go语法打印该值。</p>
+<pre><code class="language-go">type T struct {
+    a int
+    b float64
+    c string
+}
+t := &amp;T{ 7, -2.35, &quot;abc\tdef&quot; }
+fmt.Printf(&quot;%v\n&quot;, t)
+fmt.Printf(&quot;%+v\n&quot;, t)
+fmt.Printf(&quot;%#v\n&quot;, t)
+fmt.Printf(&quot;%#v\n&quot;, timeZone)
+</code></pre>
+<p>输出结果:</p>
+<pre><code class="language-shell">&amp;{7 -2.35 abc   def}
+&amp;{a:7 b:-2.35 c:abc     def}
+&amp;main.T{a:7, b:-2.35, c:&quot;abc\tdef&quot;}
+map[string]int{&quot;CST&quot;:-21600, &quot;EST&quot;:-18000, &quot;MST&quot;:-25200, &quot;PST&quot;:-28800, &quot;UTC&quot;:0}
+</code></pre>
+<p>(注意<code>&amp;</code>符号)当将引用的字符串格式应用于<code>string</code>类型或<code>[]byte</code>类型的值时，也可以通过<code>%q</code>获得。如果可能，备用格式<code>%#q</code>将使用反引号代替。(<code>%q</code>格式也适用于整数和字符，产生单引号的字符常数)。此外，<code>%x</code>可在字符串，字节数组和字节片以及整数上使用，生成一个长的十六进制字符串，并以(<code>%x</code>)格式的空格在字节之间放置空格。</p>
+<p>另一个方便的格式是<code>%T</code>，它打印值的类型。</p>
+<pre><code class="language-go">fmt.Printf(&quot;%T\n&quot;, timeZone)
+</code></pre>
+<p>输出结果:</p>
+<pre><code class="language-shell">map[string]int
+</code></pre>
+<p>如果要控制自定义类型的默认格式，则所需要做的就是定义一个在类型上带有签名<code>String()</code>的方法。对于我们的简单类型<code>T</code>，可能看起来像这样。</p>
+<pre><code class="language-go">func (t *T) String() string {
+    return fmt.Sprintf(&quot;%d/%g/%q&quot;, t.a, t.b, t.c)
+}
+fmt.Printf(&quot;%v\n&quot;, t)
+</code></pre>
+<p>输出结果:</p>
+<pre><code class="language-shell">7/-2.35/&quot;abc\tdef&quot;
+</code></pre>
+<p>（如果需要打印T类型的值以及指向T的指针，则String的接收者必须为值类型；此示例使用了一个指针，因为它对于结构类型更有效且更惯用。请参见下面的指针vs.值接收者以获取更多信息。）</p>
+<p><code>String</code>方法能够调用<code>Sprintf</code>，因为打印例程是完全可重入的，并且可以通过这种方式包装。关于此方法，有一个重要的细节要理解：不要通过以无限期地重复使用String方法的方式调用Sprintf来构造String。如果Sprintf调用尝试将接收方直接打印为字符串，则可能会发生这种情况，而字符串又会再次调用该方法。如本例所示，这是一个常见且容易犯的错误。</p>
+<pre><code class="language-go">type MyString string
+
+func (m MyString) String() string {
+    return fmt.Sprintf(&quot;MyString=%s&quot;, m) // Error: will recur forever.
+}
+</code></pre>
+<p>也很容易解决：将参数转换为基本字符串类型，该类型没有方法。</p>
+<pre><code class="language-go">type MyString string
+func (m MyString) String() string {
+    return fmt.Sprintf(&quot;MyString=%s&quot;, string(m)) // OK: note conversion.
+}
+</code></pre>
+<p>在<a href="https://golang.org/doc/effective_go.html#initialization">初始化部分</a>，我们将看到另一种避免这种递归的技术。</p>
+<p>另一种打印方式是将打印参数直接传递给另一个这样的函数。<code>Printf</code>的签名使用<code>...interface{}</code>类型作为其最后一个参数，以指定可以在格式之后显示任意数量的参数(任意类型)。</p>
+<pre><code class="language-go">func Printf(format string, v ...interface{}) (n int, err error) {
+</code></pre>
+<p>在函数<code>Printf</code>中，<code>v</code>的作用类似于<code>[]interface{}</code>类型的变量，但如果将其传递给另一个可变参数的函数，则其作用类似于常规的参数列表。这是我们上面使用的函数<code>log.Println</code>的实现。它将其参数直接传递给<code>fmt.Sprintln</code>进行实际格式化。</p>
+<pre><code class="language-go">// Println prints to the standard logger in the manner of fmt.Println.
+func Println(v ...interface{}) {
+    std.Output(2, fmt.Sprintln(v...))  // Output takes parameters (int, string)
+}
+</code></pre>
+<p>我们在<code>v</code>后面的<code>Sprintln</code>嵌套调用中编写<code>...</code>，以告诉编译器将v视为参数列表。否则它将仅将v作为单个slice参数传递。</p>
+<p>顺便说一句，<code>...</code>参数可以是特定类型，例如<code>...int</code>用于选择最小整数列表的min函数:</p>
+<pre><code class="language-go">func Min(a ...int) int {
+    min := int(^uint(0) &gt;&gt; 1)  // largest int
+    for _, i := range a {
+        if i &lt; min {
+            min = i
+        }
+    }
+    return min
+}
+</code></pre>
+<h1 id="追加append">追加(append)</h1>
+<p>内置函数<code>append</code>的签名与上面定义的<code>Append</code>不同。签名是下面这样:</p>
+<pre><code class="language-go">func append(slice []T, elements ...T) []T
+</code></pre>
+<p>其中<code>T</code>是任何给定类型的占位符。实际上无法在Go中编写一个由调用者确定类型T的函数。这就是内置append的原因：它需要编译器的支持。</p>
+<p><code>append</code>操作是将元素附加到切片的末尾并返回结果。需要返回结果，因为与我们写的Append一样，底层数组可能会更改。这个简单的例子:</p>
+<pre><code class="language-go">x := []int{1,2,3}
+x = append(x, 4, 5, 6)
+fmt.Println(x)
+</code></pre>
+<p>打印<code>[1 2 3 4 5 6]</code>。因此，<code>append</code>的工作原理类似于<code>Printf</code>，它收集了任意数量的参数。</p>
+<p>但是，如果我们要执行追加操作并将切片附加到切片，该怎么办？简单: 就像在上面对Output的调用中一样，在调用站点上使用<code>...</code>。此代码段产生与上面相同的输出。</p>
+<pre><code class="language-go">x := []int{1,2,3}
+y := []int{4,5,6}
+x = append(x, y...)
+fmt.Println(x)
+</code></pre>
+<p>没有那个<code>...</code>，它将无法编译，因为类型将是错误的。<code>y</code>不是<code>int</code>类型。</p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://whimthen.github.io/post/SDCTjJ1vS/" class="post-title gt-a-link">
+                    1.2.3 - Go: 最佳实践(函数)
+                </a>
+            </div>
+        
+
+        
+            
+                <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: '516a9843e72b0a3e198b',
+    clientSecret: 'ccc6c5a8ea4aa0c9e4c36c87cb9c1ef54b5bc97c',
+    repo: 'whimthen.github.io',
+    owner: 'whimthen',
+    admin: ['whimthen'],
+    id: location.pathname,      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+            
+
+            
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">温故而知新</div>
+    <div class="social-container">
+        
+            
+                <a href="https://github.com/whimthen" target="_blank">
+                    <i class="fab fa-github gt-c-content-color-first"></i>
+                </a>
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a href="https://whimthen.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+<script>
+    hljs.initHighlightingOnLoad()
+</script>
+
+
+    </div>
+</div>
+</body>
+</html>
