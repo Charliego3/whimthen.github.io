@@ -4,7 +4,7 @@
 <meta name="description" content=""/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>1.2.4 - Go: 最佳实践(内建函数、数据结构) | 自留地</title>
-<link rel="shortcut icon" href="https://whimthen.github.io/favicon.ico?v=1585363230292">
+<link rel="shortcut icon" href="https://whimthen.github.io/favicon.ico?v=1585364561166">
 <link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.css" rel="stylesheet">
 <link rel="stylesheet" href="https://whimthen.github.io/styles/main.css">
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
@@ -197,7 +197,7 @@ v := make([]int, 100)
 array := [...]float64{7.0, 8.5, 9.1}
 x := Sum(&amp;array)  // Note the explicit address-of operator
 </code></pre>
-<p>但是，即使这种风格也不是惯用的Go。请改用切片。</p>
+<p>但是，这种风格不是惯用的。请改用切片。</p>
 <h1 id="切片">切片</h1>
 <p>切片包装数组可为数据序列提供更通用，更强大和更方便的接口。除了具有明确维数的项(例如转换矩阵)外，Go中的大多数数组编程都是使用切片而不是简单数组完成的。</p>
 <p>切片包含对基础数组的引用，如果您将一个切片分配给另一个切片，则它们都引用同一数组。如果函数采用<code>slice</code>参数，则对<code>slice</code>的元素所做的更改将对调用者可见，这类似于将指针传递给基础数组。因此，<code>Read</code>函数可以接受切片参数，而不是指针和大小。切片内的长度设置了要读取多少数据的上限。这是包os中File类型的Read方法的签名:</p>
