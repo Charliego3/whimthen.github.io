@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://whimthen.github.io</id>
     <title>自留地</title>
-    <updated>2020-03-28T02:38:03.050Z</updated>
+    <updated>2020-03-28T02:40:32.627Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://whimthen.github.io"/>
     <link rel="self" href="https://whimthen.github.io/atom.xml"/>
@@ -67,7 +67,7 @@ s := []string      {Enone: &quot;no error&quot;, Eio: &quot;Eio&quot;, Einval: &
 m := map[int]string{Enone: &quot;no error&quot;, Eio: &quot;Eio&quot;, Einval: &quot;invalid argument&quot;}
 </code></pre>
 <blockquote>
-<p><span id="compositeLiteral">1. 复合字面量: 关于Go中的复合字面量更多的解释可以查看 https://studygolang.com/articles/12913</span></p>
+<p><span id="compositeLiteral">1. 复合字面量: 关于Go中的复合字面量更多的解释可以<a href="https://studygolang.com/articles/12913">查看</a> </span></p>
 </blockquote>
 <h1 id="使用make分配内存">使用<code>make</code>分配内存</h1>
 <p>内置函数<code>make(T, args)</code>的目的不同于<code>new(T)</code>。它仅创建<code>slice</code>，<code>map</code>和<code>channel</code>，并且返回类型<code>T</code>(不是<code>*T</code>)的初始化值(未归零)。区别的原因是这三种类型在底层表示了对在使用之前必须初始化的数据结构的引用。例如，切片是一个三项描述符，其中包含指向数据(数组内部)，长度和容量的指针，在初始化这些之前，切片为<code>nil</code>。对于<code>slice</code>，<code>map</code>和<code>channel</code>，<code>make</code>初始化内部数据结构并准备要使用的值。例如:</p>
