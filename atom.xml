@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://whimthen.github.io</id>
     <title>Little</title>
-    <updated>2020-03-29T08:58:07.282Z</updated>
+    <updated>2020-03-30T03:14:00.592Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://whimthen.github.io"/>
     <link rel="self" href="https://whimthen.github.io/atom.xml"/>
@@ -10,6 +10,45 @@
     <logo>https://whimthen.github.io/images/avatar.png</logo>
     <icon>https://whimthen.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, Little</rights>
+    <entry>
+        <title type="html"><![CDATA[1.2.6 - Go: 最佳实践(方法)]]></title>
+        <id>https://whimthen.github.io/post/sE2LRGZym/</id>
+        <link href="https://whimthen.github.io/post/sE2LRGZym/">
+        </link>
+        <updated>2020-03-30T03:13:35.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="指针和值">指针和值</h1>
+<p>正如我们在ByteSize上看到的那样，可以为任何命名类型(指针或接口除外)定义方法。接收者不必是结构。</p>
+<p>在上面的切片讨论中，我们编写了一个Append函数。我们可以将其定义为切片的方法。为此，我们首先声明一个可以绑定该方法的命名类型，然后使该方法的接收者成为该类型的值。</p>
+<pre><code class="language-go">type ByteSlice []byte
+
+func (slice ByteSlice) Append(data []byte) []byte {
+    // Body exactly the same as the Append function defined above.
+}
+</code></pre>
+<p>这仍然需要方法返回更新的切片。我们可以通过重新定义该方法以将指向ByteSlice的指针作为其接收方来消除这种笨拙，因此该方法可以覆盖调用方的切片。</p>
+<pre><code class="language-go">func (p *ByteSlice) Append(data []byte) {
+    slice := *p
+    // Body as above, without the return.
+    *p = slice
+}
+</code></pre>
+<p>实际上，我们可以做得更好。如果我们修改函数，使其看起来像是一个标准的<code>Write</code>方法，就像这样，</p>
+<pre><code class="language-go">func (p *ByteSlice) Write(data []byte) (n int, err error) {
+    slice := *p
+    // Again as above.
+    *p = slice
+    return len(data), nil
+}
+</code></pre>
+<p>则<code>*ByteSlice</code>类型满足标准接口<code>io.Writer</code>，这很方便。例如，我们可以打印成一个。</p>
+<pre><code class="language-go">var b ByteSlice
+fmt.Fprintf(&amp;b, &quot;This hour has %d days\n&quot;, 7)
+</code></pre>
+<p>我们传递<code>ByteSlice</code>的地址，因为只有<code>*ByteSlice</code>满足<code>io.Writer</code>。关于指针与接收器的值的规则是，可以在指针和值上调用值方法，但只能在指针上调用指针方法。</p>
+<p>之所以出现此规则，是因为指针方法可以修改接收者。在一个值上调用它们将导致该方法接收该值的副本，因此任何修改将被丢弃。因此，该语言不允许出现此错误。当值是可寻址时，该语言将通过自动插入地址运算符来处理在值上调用指针方法的常见情况。在我们的示例中，变量b是可寻址的，因此我们可以仅使用<code>b.Write</code>调用其<code>Write</code>方法。编译器会将其重写为<code>(&amp;b).Write</code>。</p>
+<p>顺便说一句，在字节的一部分上使用<code>Write</code>的想法对于<code>bytes.Buffer</code>的实现至关重要。</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[1.2.5 - Go: 最佳实践(初始化)]]></title>
         <id>https://whimthen.github.io/post/6phOW9Yw8/</id>

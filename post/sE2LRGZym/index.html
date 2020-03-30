@@ -3,7 +3,7 @@
     <meta charset="utf-8"/>
 <meta name="description" content=""/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>1.2.5 - Go: 最佳实践(初始化) | Little</title>
+<title>1.2.6 - Go: 最佳实践(方法) | Little</title>
 <link rel="shortcut icon" href="https://whimthen.github.io/favicon.ico?v=1585538033474">
 <link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.css" rel="stylesheet">
 <link rel="stylesheet" href="https://whimthen.github.io/styles/main.css">
@@ -87,11 +87,11 @@
         <div class="post-detail gt-bg-theme-color-second">
             <article class="gt-post-content">
                 <h2 class="post-title">
-                    1.2.5 - Go: 最佳实践(初始化)
+                    1.2.6 - Go: 最佳实践(方法)
                 </h2>
                 <div class="post-info">
                     <time class="post-time gt-c-content-color-first">
-                        · 2020-03-29 ·
+                        · 2020-03-30 ·
                     </time>
                     
                         <a href="https://whimthen.github.io/tag/Pinmphdri/" class="post-tags">
@@ -108,75 +108,37 @@
                     
                 </div>
                 <div class="post-content">
-                    <h1 id="简介">简介</h1>
-<p>从表面上看，Go与C或C++中的初始化没有太大区别，但是Go中的初始化功能更强大。可以在初始化期间构建复杂的结构，并且正确处理了初始化对象之间的排序问题，甚至可以处理不同的包之间的排序问题。</p>
-<h1 id="常量">常量</h1>
-<p>Go中的常量就是值不变的变量。即使在函数中定义为局部变量时，也可以在编译时创建它们，并且只能是数字，字符，字符串或布尔值。由于编译时的限制，定义它们的表达式必须是可由编译器评估的常量表达式。例如，<code>1&lt;&lt;3</code>是常量表达式，而<code>math.Sin(math.Pi / 4)</code>并不是因为对<code>math.Sin</code>的函数调用需要在运行时发生。</p>
-<p>在Go中，使用<code>iota</code>枚举器创建枚举常量。由于iota可以是表达式的一部分，并且表达式可以隐式重复，因此可以轻松构建复杂的值集。</p>
-<pre><code class="language-go">type ByteSize float64
+                    <h1 id="指针和值">指针和值</h1>
+<p>正如我们在ByteSize上看到的那样，可以为任何命名类型(指针或接口除外)定义方法。接收者不必是结构。</p>
+<p>在上面的切片讨论中，我们编写了一个Append函数。我们可以将其定义为切片的方法。为此，我们首先声明一个可以绑定该方法的命名类型，然后使该方法的接收者成为该类型的值。</p>
+<pre><code class="language-go">type ByteSlice []byte
 
-const (
-    _           = iota // ignore first value by assigning to blank identifier
-    KB ByteSize = 1 &lt;&lt; (10 * iota)
-    MB
-    GB
-    TB
-    PB
-    EB
-    ZB
-    YB
-)
-</code></pre>
-<p>将诸如String之类的方法附加到任何用户定义的类型的能力使得任意值都可以自动格式化自身以进行打印。尽管您会看到它最常用于结构，但该技术对于标量类型(如ByteSize之类的浮点类型)也很有用。</p>
-<pre><code class="language-go">func (b ByteSize) String() string {
-    switch {
-    case b &gt;= YB:
-        return fmt.Sprintf(&quot;%.2fYB&quot;, b/YB)
-    case b &gt;= ZB:
-        return fmt.Sprintf(&quot;%.2fZB&quot;, b/ZB)
-    case b &gt;= EB:
-        return fmt.Sprintf(&quot;%.2fEB&quot;, b/EB)
-    case b &gt;= PB:
-        return fmt.Sprintf(&quot;%.2fPB&quot;, b/PB)
-    case b &gt;= TB:
-        return fmt.Sprintf(&quot;%.2fTB&quot;, b/TB)
-    case b &gt;= GB:
-        return fmt.Sprintf(&quot;%.2fGB&quot;, b/GB)
-    case b &gt;= MB:
-        return fmt.Sprintf(&quot;%.2fMB&quot;, b/MB)
-    case b &gt;= KB:
-        return fmt.Sprintf(&quot;%.2fKB&quot;, b/KB)
-    }
-    return fmt.Sprintf(&quot;%.2fB&quot;, b)
+func (slice ByteSlice) Append(data []byte) []byte {
+    // Body exactly the same as the Append function defined above.
 }
 </code></pre>
-<p>表达式YB打印为1.00YB，而<code>ByteSize(1e13)</code>打印为9.09TB。<br>
-在这里使用<code>Sprintf</code>来实现<code>ByteSize</code>的String方法是安全的（避免无限期地重复），不是因为发生转换，而是因为它使用<code>%f</code>调用了<code>Sprintf</code>，它不是字符串格式：<code>Sprintf</code>仅在需要字符串时才调用<code>String</code>方法，<code>%f</code>需要一个浮点值。</p>
-<h1 id="变量">变量</h1>
-<p>变量可以像常量一样被初始化，但是初始化器可以是在运行时计算的通用表达式。</p>
-<pre><code class="language-go">var (
-    home   = os.Getenv(&quot;HOME&quot;)
-    user   = os.Getenv(&quot;USER&quot;)
-    gopath = os.Getenv(&quot;GOPATH&quot;)
-)
-</code></pre>
-<h1 id="初始化函数init">初始化函数(init)</h1>
-<p>最后，每个源文件都可以定义自己的无参数函数(<code>init</code>)来设置所需的任何状态。(实际上，每个文件可以具有多个<code>ini</code>t函数。)意味着：在程序包中的所有变量声明评估了其初始化程序之后，才调用init，并且只有在所有导入的程序包都被初始化之后才对init进行评估。</p>
-<p>除了不能表示为声明的初始化外，init函数的常见用法是在实际执行开始之前验证或修复程序状态的正确性。</p>
-<pre><code class="language-go">func init() {
-    if user == &quot;&quot; {
-        log.Fatal(&quot;$USER not set&quot;)
-    }
-    if home == &quot;&quot; {
-        home = &quot;/home/&quot; + user
-    }
-    if gopath == &quot;&quot; {
-        gopath = home + &quot;/go&quot;
-    }
-    // gopath may be overridden by --gopath flag on command line.
-    flag.StringVar(&amp;gopath, &quot;gopath&quot;, gopath, &quot;override default GOPATH&quot;)
+<p>这仍然需要方法返回更新的切片。我们可以通过重新定义该方法以将指向ByteSlice的指针作为其接收方来消除这种笨拙，因此该方法可以覆盖调用方的切片。</p>
+<pre><code class="language-go">func (p *ByteSlice) Append(data []byte) {
+    slice := *p
+    // Body as above, without the return.
+    *p = slice
 }
 </code></pre>
+<p>实际上，我们可以做得更好。如果我们修改函数，使其看起来像是一个标准的<code>Write</code>方法，就像这样，</p>
+<pre><code class="language-go">func (p *ByteSlice) Write(data []byte) (n int, err error) {
+    slice := *p
+    // Again as above.
+    *p = slice
+    return len(data), nil
+}
+</code></pre>
+<p>则<code>*ByteSlice</code>类型满足标准接口<code>io.Writer</code>，这很方便。例如，我们可以打印成一个。</p>
+<pre><code class="language-go">var b ByteSlice
+fmt.Fprintf(&amp;b, &quot;This hour has %d days\n&quot;, 7)
+</code></pre>
+<p>我们传递<code>ByteSlice</code>的地址，因为只有<code>*ByteSlice</code>满足<code>io.Writer</code>。关于指针与接收器的值的规则是，可以在指针和值上调用值方法，但只能在指针上调用指针方法。</p>
+<p>之所以出现此规则，是因为指针方法可以修改接收者。在一个值上调用它们将导致该方法接收该值的副本，因此任何修改将被丢弃。因此，该语言不允许出现此错误。当值是可寻址时，该语言将通过自动插入地址运算符来处理在值上调用指针方法的常见情况。在我们的示例中，变量b是可寻址的，因此我们可以仅使用<code>b.Write</code>调用其<code>Write</code>方法。编译器会将其重写为<code>(&amp;b).Write</code>。</p>
+<p>顺便说一句，在字节的一部分上使用<code>Write</code>的想法对于<code>bytes.Buffer</code>的实现至关重要。</p>
 
                 </div>
             </article>
@@ -185,8 +147,8 @@ const (
         
             <div class="next-post">
                 <div class="next gt-c-content-color-first">下一篇</div>
-                <a href="https://whimthen.github.io/post/cmK5xcYzD/" class="post-title gt-a-link">
-                    1.2.4 - Go: 最佳实践(内建函数、数据结构)
+                <a href="https://whimthen.github.io/post/6phOW9Yw8/" class="post-title gt-a-link">
+                    1.2.5 - Go: 最佳实践(初始化)
                 </a>
             </div>
         
